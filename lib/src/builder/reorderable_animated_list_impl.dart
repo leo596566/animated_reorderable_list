@@ -119,6 +119,7 @@ class ReorderableAnimatedListImplState<E extends Object>
       onReorder: onReorder,
       onReorderStart: onReorderStart,
       onReorderEnd: onReorderEnd,
+      onChanged: onChanged,
       proxyDecorator: proxyDecorator,
       insertAnimationBuilder: insertAnimationBuilder,
       removeAnimationBuilder: removeAnimationBuilder,

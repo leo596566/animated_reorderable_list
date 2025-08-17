@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -44,6 +45,7 @@ class ReorderableAnimatedBuilder<E> extends StatefulWidget {
       this.onReorder,
       this.onReorderEnd,
       this.onReorderStart,
+      this.onChanged,
       this.proxyDecorator,
       this.initialCount = 0,
       this.delegateBuilder,
@@ -53,8 +55,7 @@ class ReorderableAnimatedBuilder<E> extends StatefulWidget {
       required this.dragStartDelay,
       required this.nonDraggableIndices,
       required this.lockedIndices,
-      required this.addDragStartListener,
-      this.onChanged})
+      required this.addDragStartListener})
       : assert(initialCount >= 0),
         super(key: key);
 
