@@ -40,6 +40,7 @@ class ReorderableAnimatedListImpl<E extends Object> extends ReorderableAnimatedL
             onReorder: onReorder,
             onReorderStart: onReorderStart,
             onReorderEnd: onReorderEnd,
+            onChanged: onChanged,
             proxyDecorator: proxyDecorator,
             scrollDirection: scrollDirection,
             insertItemBuilder: insertItemBuilder,
