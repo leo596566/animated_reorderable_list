@@ -1,8 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'builder/reorderable_animated_list_base.dart';
-import 'builder/reorderable_animated_list_impl.dart';
 
 ///A [ListView] that enables users to interactively reorder items through dragging, with animated insertion and removal of items.
 ///
@@ -365,6 +365,8 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   /// Defaults to true.
   final bool enableSwap;
 
+  final void Function(int)? onChanged;
+
   /// Creates a [AnimatedReorderableListView] that enables users to interactively reorder items through dragging,
   /// with animated insertion and removal of items.
   const AnimatedReorderableListView({
@@ -400,6 +402,7 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
     this.nonDraggableItems = const [],
     this.lockedItems = const [],
     this.enableSwap = true,
+    this.onChanged,
   }) : super(key: key);
 
   /// The state from the closest instance of this class that encloses the given
@@ -420,8 +423,7 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
           ErrorDescription(
             'No AnimatedReorderableListViewState ancestor could be found starting from the context that was passed to AnimatedReorderableListViewState.of().',
           ),
-          ErrorHint(
-              'This can happen when the context provided is from the same StatefulWidget that '
+          ErrorHint('This can happen when the context provided is from the same StatefulWidget that '
               'built the AnimatedReorderableListViewState. '),
           context.describeElement('The context used was'),
         ]);
@@ -446,12 +448,10 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   }
 
   @override
-  State<AnimatedReorderableListView<E>> createState() =>
-      AnimatedReorderableListViewState();
+  State<AnimatedReorderableListView<E>> createState() => AnimatedReorderableListViewState();
 }
 
-class AnimatedReorderableListViewState<E extends Object>
-    extends State<AnimatedReorderableListView<E>> {
+class AnimatedReorderableListViewState<E extends Object> extends State<AnimatedReorderableListView<E>> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -491,6 +491,7 @@ class AnimatedReorderableListViewState<E extends Object>
               nonDraggableItems: widget.nonDraggableItems,
               lockedItems: widget.lockedItems,
               enableSwap: widget.enableSwap,
+              onChanged: widget.onChanged,
             ),
           ),
         ]);
