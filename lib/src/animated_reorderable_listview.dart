@@ -1,8 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'builder/reorderable_animated_list_base.dart';
-import 'builder/reorderable_animated_list_impl.dart';
 
 ///A [ListView] that enables users to interactively reorder items through dragging, with animated insertion and removal of items.
 ///
@@ -366,14 +366,14 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   final bool enableSwap;
 
   /// Whether to add a [ReorderableGridDragStartListener] to the reorderable ItemBuilder.
-  /// 
+  ///
   /// Defaults to true.
-  /// 
+  ///
   /// If set to false, the items in ItemBuilder will not respond to pointer down events,
   /// which means they won't be draggable. This can be useful if you still want to
   /// receive item pointer events, and add your custom drag start listener
   /// to the item widget.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// ReorderableGridDragStartListener(
@@ -384,6 +384,8 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   /// ),
   /// ```
   final bool addDragStartListener;
+
+  final void Function(int)? onChanged;
 
   /// Creates a [AnimatedReorderableListView] that enables users to interactively reorder items through dragging,
   /// with animated insertion and removal of items.
@@ -398,6 +400,7 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
     this.removeDuration,
     this.onReorderStart,
     this.onReorderEnd,
+    this.onChanged,
     this.proxyDecorator,
     this.scrollDirection = Axis.vertical,
     this.padding,
@@ -441,8 +444,7 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
           ErrorDescription(
             'No AnimatedReorderableListViewState ancestor could be found starting from the context that was passed to AnimatedReorderableListViewState.of().',
           ),
-          ErrorHint(
-              'This can happen when the context provided is from the same StatefulWidget that '
+          ErrorHint('This can happen when the context provided is from the same StatefulWidget that '
               'built the AnimatedReorderableListViewState. '),
           context.describeElement('The context used was'),
         ]);
@@ -467,12 +469,10 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   }
 
   @override
-  State<AnimatedReorderableListView<E>> createState() =>
-      AnimatedReorderableListViewState();
+  State<AnimatedReorderableListView<E>> createState() => AnimatedReorderableListViewState();
 }
 
-class AnimatedReorderableListViewState<E extends Object>
-    extends State<AnimatedReorderableListView<E>> {
+class AnimatedReorderableListViewState<E extends Object> extends State<AnimatedReorderableListView<E>> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -500,6 +500,7 @@ class AnimatedReorderableListViewState<E extends Object>
               onReorder: widget.onReorder,
               onReorderStart: widget.onReorderStart,
               onReorderEnd: widget.onReorderEnd,
+              onChanged: widget.onChanged,
               proxyDecorator: widget.proxyDecorator,
               buildDefaultDragHandles: widget.buildDefaultDragHandles,
               scrollDirection: widget.scrollDirection,
