@@ -152,7 +152,7 @@ class ReorderableAnimatedContentState extends State<ReorderableAnimatedContent> 
       _startOffset = _targetOffset;
     }
     rebuild();
-    onChanged.call(index);
+    onChanged?.call(index);
   }
 
   void _updateItemPosition() {
