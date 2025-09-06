@@ -418,8 +418,6 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
           }
           if (rightItem.mounted && shouldSwapRight) {
             newIndex = rightPointer;
-            print("rightItem.offset ${rightItem.offset} ${rightPointer} ${rightItem.index}  ${rightItem.dragging}");
-
             found = true;
             break;
           }
