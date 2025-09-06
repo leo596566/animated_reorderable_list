@@ -119,10 +119,10 @@ class ReorderableAnimatedContentState extends State<ReorderableAnimatedContent> 
     return _targetOffset;
   }
 
-  void updateForGap(bool animate, void Function(int)? onChanged) {
-    if (!mounted) return;
+  bool updateForGap(bool animate) {
+    if (!mounted) return false;
     final Offset newTargetOffset = listState.calculateNextDragOffset(index);
-    if (newTargetOffset == _targetOffset) return;
+    if (newTargetOffset == _targetOffset) return false;
     _targetOffset = newTargetOffset;
 
     if (animate) {
@@ -152,7 +152,7 @@ class ReorderableAnimatedContentState extends State<ReorderableAnimatedContent> 
       _startOffset = _targetOffset;
     }
     rebuild();
-    onChanged?.call(index);
+    return true;
   }
 
   void _updateItemPosition() {

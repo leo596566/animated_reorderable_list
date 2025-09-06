@@ -196,7 +196,7 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
       if (childItem == item || !childItem.mounted) {
         continue;
       }
-      item.updateForGap(false, null);
+      item.updateForGap(false);
     }
     return _dragInfo;
   }
@@ -255,9 +255,9 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
       }
 
       /// if end of proxy object is after scroll window
-      else if (proxyObjectEnd > scrollWindowEnd && position.pixels < position.maxScrollExtent) {
+      else if (proxyObjectEnd + 23 > scrollWindowEnd && position.pixels < position.maxScrollExtent) {
         final overDrag = max(proxyObjectEnd - scrollWindowEnd, overDragMax);
-        newOffset = min(position.maxScrollExtent, position.pixels + step * overDrag / overDragCoef);
+        newOffset = min(position.maxScrollExtent, position.pixels + step * 2 * overDrag / overDragCoef);
       }
     } else {
       /// if start of proxy object is before scroll window
@@ -374,21 +374,91 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
 
   void _dragUpdateItems() {
     assert(_dragInfo != null);
-
     int newIndex = _insertIndex!;
-
-    final dragCenter = _dragInfo!.itemSize.center(_dragInfo!.dragPosition - _dragInfo!.dragOffset);
-
-    for (final ReorderableAnimatedContentState item in _items.values) {
-      if (!item.mounted) continue;
-      final Rect geometry = item.targetGeometryNonOffset();
-      if (widget.lockedIndices.contains(item.index)) {
-        continue;
-      }
+    Offset dragCenter = _dragInfo!.itemSize.center(_dragInfo!.dragPosition - _dragInfo!.dragOffset);
+    // 先检查当前位置
+    final ReorderableAnimatedContentState? currentItem = _items[newIndex];
+    if (currentItem != null) {
+      final Rect geometry = currentItem.targetGeometryNonOffset();
       if (geometry.contains(dragCenter)) {
-        newIndex = item.index;
-        break;
+        return;
       }
+    }
+
+    bool found = false;
+    int startIndex = newIndex;
+    if (startIndex == -1) startIndex = 0;
+    int leftPointer = startIndex - 1;
+    int rightPointer = startIndex + 1;
+    int maxIndex = _items.keys.reduce(max) + 1;
+
+    while (leftPointer >= 0 || rightPointer < maxIndex) {
+      // 向下遍历
+      if (rightPointer < maxIndex && !found) {
+        final ReorderableAnimatedContentState? rightItem = _items[rightPointer];
+
+        if (rightItem != null) {
+          if (widget.lockedIndices.contains(rightItem.index)) {
+            rightPointer++;
+            continue;
+          }
+
+          Rect geometry = rightItem.targetGeometryNonOffset();
+          bool shouldSwapRight = false;
+          if (widget.scrollDirection == Axis.vertical) {
+            final double startPoint = geometry.top + geometry.height / 2.2;
+            if (dragCenter.dy > startPoint) {
+              shouldSwapRight = true;
+            }
+          } else {
+            final double startPoint = geometry.left;
+            if (dragCenter.dx > startPoint) {
+              shouldSwapRight = true;
+            }
+          }
+          if (rightItem.mounted && shouldSwapRight) {
+            newIndex = rightPointer;
+            print("rightItem.offset ${rightItem.offset} ${rightPointer} ${rightItem.index}  ${rightItem.dragging}");
+
+            found = true;
+            break;
+          }
+        }
+        rightPointer++;
+      }
+
+      // 向上遍历
+      if (leftPointer >= 0 && !found) {
+        final ReorderableAnimatedContentState? leftItem = _items[leftPointer];
+        if (leftItem != null) {
+          if (widget.lockedIndices.contains(leftItem.index)) {
+            leftPointer--;
+            continue;
+          }
+
+          Rect geometry = leftItem.targetGeometryNonOffset();
+          bool shouldSwapLeft = false;
+          if (widget.scrollDirection == Axis.vertical) {
+            final double startPoint = geometry.top + geometry.height / 1.4;
+            if (dragCenter.dy < startPoint) {
+              shouldSwapLeft = true;
+            }
+          } else {
+            final double startPoint = geometry.left;
+            if (dragCenter.dx < startPoint) {
+              shouldSwapLeft = true;
+            }
+          }
+
+          if (leftItem.mounted && shouldSwapLeft) {
+            newIndex = leftPointer;
+            found = true;
+            break;
+          }
+        }
+        leftPointer--;
+      }
+      break;
     }
 
     if (newIndex == _insertIndex) return;
@@ -398,7 +468,10 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
       if (item.index == _dragIndex || widget.lockedIndices.contains(item.index)) {
         continue;
       }
-      item.updateForGap(true, widget.onChanged);
+
+      if (item.updateForGap(true)) {
+        widget.onChanged?.call(newIndex);
+      }
     }
   }
 
@@ -432,7 +505,7 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
 
   void registerItem(ReorderableAnimatedContentState item) {
     if (_dragInfo != null && _items[item.index] != item) {
-      item.updateForGap(false, null);
+      item.updateForGap(false);
     }
     _items[item.index] = item;
     if (item.index == _dragInfo?.index) {
