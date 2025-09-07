@@ -320,6 +320,8 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
   /// Whether the extent of the scroll view in the scrollDirection should be determined by the contents being viewed.
   final bool shrinkWrap;
 
+  final double cacheExtent;
+
   /// A callback function to determine if two items in the list are considered the same.
   ///
   /// This function is important to prevent unnecessary animations when editing or updating items.
@@ -423,6 +425,7 @@ class AnimatedReorderableListView<E extends Object> extends StatefulWidget {
     this.nonDraggableItems = const [],
     this.lockedItems = const [],
     this.enableSwap = true,
+    this.cacheExtent = 1200.0,
     this.addDragStartListener = true,
   }) : super(key: key);
 
@@ -487,6 +490,7 @@ class AnimatedReorderableListViewState<E extends Object> extends State<AnimatedR
         dragStartBehavior: widget.dragStartBehavior,
         clipBehavior: widget.clipBehavior,
         shrinkWrap: widget.shrinkWrap,
+        cacheExtent: widget.cacheExtent,
         slivers: [
           SliverPadding(
             padding: widget.padding ?? EdgeInsets.zero,

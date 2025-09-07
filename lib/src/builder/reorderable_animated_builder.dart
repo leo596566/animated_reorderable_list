@@ -406,7 +406,7 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
           Rect geometry = rightItem.targetGeometryNonOffset();
           bool shouldSwapRight = false;
           if (widget.scrollDirection == Axis.vertical) {
-            final double startPoint = geometry.top + geometry.height / 2.2;
+            final double startPoint = geometry.top + geometry.height / 2;
             if (dragCenter.dy > startPoint) {
               shouldSwapRight = true;
             }
@@ -437,7 +437,7 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
           Rect geometry = leftItem.targetGeometryNonOffset();
           bool shouldSwapLeft = false;
           if (widget.scrollDirection == Axis.vertical) {
-            final double startPoint = geometry.top + geometry.height / 1.4;
+            final double startPoint = geometry.top + geometry.height / 2;
             if (dragCenter.dy < startPoint) {
               shouldSwapLeft = true;
             }
