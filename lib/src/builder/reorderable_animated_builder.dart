@@ -427,6 +427,11 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
             } else {
               geometry = rightItem.targetGeometryNonOffset();
             }
+
+            if (!widget.nonDraggableIndices.contains(rightItem.index)) {
+              factor = geometry.height / 8;
+            }
+
             print('geometry: $geometry');
 
             // Rect geometry = _dragInfo!.index < rightItem.index
@@ -467,12 +472,14 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
             // 如果原始向上，并且
             num startPoint = widget.nonDraggableIndices.contains(leftItem.index) ? geometry.bottom : geometry.top;
             print('startPoint: $startPoint, dragCenter.dy: ${dragCenter.dy}, factor: ');
-            num factor = geometry.height / 1.5;
+            num factor = geometry.height / 2;
             // if (leftItem.index == _dragInfo?.index || ) {
             if (!widget.nonDraggableIndices.contains(leftItem.index)) {
               // factor = geometry.height / 1.2;
               if (leftItem.index == _dragInfo?.index && widget.nonDraggableIndices.contains(_dragInfo!.index - 1)) {
                 factor = 0;
+              } else {
+                factor = geometry.height / 1.2;
               }
             }
 
@@ -480,6 +487,12 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
                 !widget.nonDraggableIndices.contains(leftItem!.index + 1)) {
               factor = 0;
             }
+
+            if (!widget.nonDraggableIndices.contains(leftItem.index) &&
+                !widget.nonDraggableIndices.contains(leftItem!.index + 1)) {
+              factor = geometry.height / 1.2;
+            }
+
             // }
             if (dragCenter.dy < geometry.top + factor) {
               shouldSwapLeft = true;
