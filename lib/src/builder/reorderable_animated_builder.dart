@@ -467,16 +467,17 @@ class ReorderableAnimatedBuilderState extends State<ReorderableAnimatedBuilder>
             // 如果原始向上，并且
             num startPoint = widget.nonDraggableIndices.contains(leftItem.index) ? geometry.bottom : geometry.top;
             print('startPoint: $startPoint, dragCenter.dy: ${dragCenter.dy}, factor: ');
-            num factor = geometry.height / 2;
+            num factor = geometry.height / 1.5;
             // if (leftItem.index == _dragInfo?.index || ) {
             if (!widget.nonDraggableIndices.contains(leftItem.index)) {
               // factor = geometry.height / 1.2;
-              if (leftItem.index == _dragInfo?.index && widget.nonDraggableIndices.contains(_dragInfo!.index + 1)) {
+              if (leftItem.index == _dragInfo?.index && widget.nonDraggableIndices.contains(_dragInfo!.index - 1)) {
                 factor = 0;
               }
             }
 
-            if (widget.nonDraggableIndices.contains(leftItem.index)) {
+            if (widget.nonDraggableIndices.contains(leftItem.index) &&
+                !widget.nonDraggableIndices.contains(leftItem!.index + 1)) {
               factor = 0;
             }
             // }
